@@ -1,8 +1,9 @@
-## Paul's Awesome Capstone
-=========================
+## Anamika Lal's Capstone Project
+## BrainStation Data Science Bootcamp - Apr - Jul 2024
+======================================================
 
 ### Project Overview  
-TBD, but it's going to be amazing!
+This is a recipe recommendation system
 ... 
 ...
 ...
