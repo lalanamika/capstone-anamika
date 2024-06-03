@@ -9,7 +9,9 @@ I am interested in cooking and nutrition and want to build a recipe recommendati
 
 #### The User
 Home cooks and Food enthusiasts: Individuals who enjoy cooking at home and are looking for new recipes to try.
+
 Health-conscious consumers: Users who prioritize health and nutrition in their dietary choices.
+
 Cultural explorers: Users interested in exploring diverse cuisines.
 
 #### The Idea
@@ -39,12 +41,6 @@ Or if it calls for a can something, make sure it uses the full can.
 If a recipe calls for a lot of fresh vegetables, but the recipe calls only for less portions, then it is not good in terms of food waste.
 
 
-=============
-Recipe rating - if something is in one dataset and there may be similar in other datasets
-Levinschtein distance - of ingredient lists (intersection over union)
-
-Food waste - Ingredients are vectors that are one-hot encoded or amount-encoded.
-
 #### The Impact
 
 Reduced Food Waste: The system can help reduce food waste by promoting efficient use of ingredients and leftovers. This contributes to sustainability efforts and addresses a pressing societal concern.
@@ -64,24 +60,25 @@ Contains cuisine type (Italian, Indian etc.)
 
 I checked various datasets for these things and tracked them in my [Datasets shortlist](https://docs.google.com/spreadsheets/d/1ldHpPRw_h2igZUgrDVV3-4N8vYuZXxyOC60sUJlbb7E/edit#gid=0)
 
-Currently the following 2 datasets look promising.
-https://www.kaggle.com/datasets/hugodarwood/epirecipes
+Currently the following 2 datasets seem to be good candidates for this project.
+1. https://www.kaggle.com/datasets/hugodarwood/epirecipes
 
-Pros:
+**Pros:**
 Contains ingredient measurements in the recipe.
 
-Cons:
+**Cons:**
 Small size ~ 16000 rows.
 Kaggle License says Unknown.
 Does not contain diet type (Vegan etc.) and cuisine type, but I have not been able to find any suitable dataset that contains that.
 Does not contain serving size.
 
 
-https://www.kaggle.com/datasets/irkaal/foodcom-recipes-and-reviews
-Pros:
+2. https://www.kaggle.com/datasets/irkaal/foodcom-recipes-and-reviews
+
+**Pros:**
 Contains serving size.
 
-Cons:
+**Cons:**
 Does not have measurements for the ingredients.
 
 ### Walkthrough Demo
