@@ -48,15 +48,15 @@ Reduced Food Waste: The system can help reduce food waste by promoting efficient
 Promotion of Healthy Eating: By offering personalized recipe suggestions based on users' preferences and dietary restrictions, the recommendation system can encourage users to explore and adopt healthier eating habits. This aligns with the growing societal emphasis on wellness and nutrition.
 
 #### The Data
-When looking for datasets, I was looking for the following information:
-Contains list of ingredients
-Contains quantity of ingredients
-Contains nutrition information / calorie information
-Contains ratings for the recipe
-Contains recipe steps
-Contains serving size
-Contains diet type (Vegan, Gluten-free etc.)
-Contains cuisine type (Italian, Indian etc.)
+When looking for datasets, I was looking for the following information:  
+Contains list of ingredients  
+Contains quantity of ingredients  
+Contains nutrition information / calorie information  
+Contains ratings for the recipe  
+Contains recipe steps  
+Contains serving size  
+Contains diet type (Vegan, Gluten-free etc.)  
+Contains cuisine type (Italian, Indian etc.)  
 
 I checked various datasets for these things and tracked them in my [Datasets shortlist](https://docs.google.com/spreadsheets/d/1ldHpPRw_h2igZUgrDVV3-4N8vYuZXxyOC60sUJlbb7E/edit#gid=0)
 
