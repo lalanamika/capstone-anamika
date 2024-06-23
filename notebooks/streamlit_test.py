@@ -4,6 +4,8 @@
 import pandas as pd
 import streamlit as st
 import joblib
+import cust_tokenizer
+
 
 # st.write('Streamlit is an open-source app framework for Machine Learning and Data Science teams. For the docs, please click [here](https://docs.streamlit.io/en/stable/api.html). \
 #    This is is just a very small window into its capabilities.')
@@ -102,21 +104,30 @@ st.subheader("Using pretrained models with user input")
 # A. Load the model using joblib
 model = joblib.load('model_joblib.pkl')
 ing_mat = joblib.load('ing_mat.pkl')
+vect = joblib.load('vect.pkl')
 
 # B. Set up input field
-text = st.text_input('Enter your text below', 'Chicken Parmesan')
+text = st.text_input('Enter the ingredients below', 'Chicken, Parmesan, Breadcrumbs')
+textSeries = pd.Series(text)
+textSeriesTransformed = vect.transform(textSeries)
 
 # C. Use the model to predict sentiment & write result
-recipe = df[df['title'] == text].index
+# recipe = df[df['title'] == text].index
 
-st.write(recipe)
+# st.write(recipe)
 # prediction = model.predict({text})
-distances, indices = model.kneighbors(ing_mat[recipe])
+# distances, indices = model.kneighbors(ing_mat[recipe])
+distances, indices = model.kneighbors(textSeriesTransformed)
 
-recipe_titles = []
-for id in indices[0]:
-    recipe_titles.append(df.loc[id, ['title']])
-st.write(recipe_titles)
+# recipe_titles = []
+# for id in indices[0]:
+#     recipe_titles.append(df.loc[id, ['title']])
+# st.write(recipe_titles)
+for i in range(0, 11):  # TODO: 11 should be made configurable and match the n-neighbors number
+    name = df.loc[indices[0][i], ['title']].values[0]
+    distance = (distances[0][i]).round(3)
+    rating = df.loc[indices[0][i], ['rating']].values[0]
+    st.write(f"{name}  :  {distance}  :  {rating}")
 
 # prediction = 1
 # if prediction == 1:
