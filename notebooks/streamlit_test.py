@@ -56,7 +56,7 @@ def load_data(path):
 df = load_data("../data/interim/full_recipes_cleaned_2.csv")
 
 ### C. Display the dataframe in the app
-st.dataframe(df.sample(10))
+st.dataframe(df.sample(5))
 
 
 #######################################################################################################################################
@@ -106,23 +106,34 @@ model = joblib.load('model_joblib.pkl')
 ing_mat = joblib.load('ing_mat.pkl')
 vect = joblib.load('vect.pkl')
 
-# B. Set up input field
-text = st.text_input('Enter the ingredients below', 'Chicken, Parmesan, Breadcrumbs')
-textSeries = pd.Series(text)
-textSeriesTransformed = vect.transform(textSeries)
-
-# C. Use the model to predict sentiment & write result
+# B. Set up input field and run model
+# B1 - Recipe Name as input
+# text = st.text_input('Enter the recipe name', 'Chicken Parmesan')
 # recipe = df[df['title'] == text].index
-
-# st.write(recipe)
-# prediction = model.predict({text})
 # distances, indices = model.kneighbors(ing_mat[recipe])
-distances, indices = model.kneighbors(textSeriesTransformed)
 
-# recipe_titles = []
-# for id in indices[0]:
-#     recipe_titles.append(df.loc[id, ['title']])
-# st.write(recipe_titles)
+
+# B2 - Ingredient list as input
+# text = st.text_input('Enter the ingredients below', 'Chicken, Parmesan, Breadcrumbs')
+# textSeries = pd.Series(text)
+# textSeriesTransformed = vect.transform(textSeries)
+# distances, indices = model.kneighbors(textSeriesTransformed)
+
+# B3 - Use desired ingredients and undesired ingredients
+yes_ing = st.text_input('Enter the ingredients to include below', 'Chicken, Parmesan, Breadcrumbs')
+no_ing = st.text_input('Enter the ingredients to exclude below', 'None')
+
+yes_ing_series = pd.Series(yes_ing)
+yes_ing_tx = vect.transform(yes_ing_series)
+
+no_ing_series = pd.Series(no_ing)
+no_ing_tx = (vect.transform(no_ing_series)) * -1
+
+updated_ing_tx = yes_ing_tx + no_ing_tx
+
+distances, indices = model.kneighbors(updated_ing_tx)
+
+# C.  Print result
 for i in range(0, 11):  # TODO: 11 should be made configurable and match the n-neighbors number
     name = df.loc[indices[0][i], ['title']].values[0]
     distance = (distances[0][i]).round(3)
