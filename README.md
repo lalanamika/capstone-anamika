@@ -58,7 +58,8 @@ Contains serving size
 Contains diet type (Vegan, Gluten-free etc.)
 Contains cuisine type (Italian, Indian etc.)
 
-We will use the dataset from Kaggle - https://www.kaggle.com/datasets/hugodarwood/epirecipes. This contains 'list of ingredients', 'measurements for ingredients', 'calories', 'ratings', 'steps for the recipe', 'some categories like vegetarian'.
+We will use the dataset from Kaggle - https://www.kaggle.com/datasets/hugodarwood/epirecipes.
+This contains 'list of ingredients', 'measurements for ingredients', 'calories', 'ratings', 'steps for the recipe', 'some categories like vegetarian'.
 
 **Data Dictionary**
 | Column      | Non-Null Count | Dtype               | Description                                     |
