@@ -114,7 +114,8 @@ For modeling, we will be using `NearestNeighbors` to find the cosine similarity 
     - joblib dump of final model / model object
 
 * `notebooks`
-    - contains all final notebooks involved in the project
+    - `02-EDA-Epicurious-Cleaning.ipynb` - Cleaning of the dataset.
+    - `03-Pre-processing-Epicurious.ipynb` - Using CountVectorizer to tokenize the data, and NearestNeighbors to do preliminary modeling.
 
 * `reports`
     - contains final report which summarises the project
