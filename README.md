@@ -48,38 +48,44 @@ Reduced Food Waste: The system can help reduce food waste by promoting efficient
 Promotion of Healthy Eating: By offering personalized recipe suggestions based on users' preferences and dietary restrictions, the recommendation system can encourage users to explore and adopt healthier eating habits. This aligns with the growing societal emphasis on wellness and nutrition.
 
 #### The Data
-When looking for datasets, I was looking for the following information:  
-Contains list of ingredients  
-Contains quantity of ingredients  
-Contains nutrition information / calorie information  
-Contains ratings for the recipe  
-Contains recipe steps  
-Contains serving size  
-Contains diet type (Vegan, Gluten-free etc.)  
-Contains cuisine type (Italian, Indian etc.)  
+When looking for datasets, I was looking for the following information:
+Contains list of ingredients
+Contains quantity of ingredients
+Contains nutrition information / calorie information
+Contains ratings for the recipe
+Contains recipe steps
+Contains serving size
+Contains diet type (Vegan, Gluten-free etc.)
+Contains cuisine type (Italian, Indian etc.)
 
-I checked various datasets for these things and tracked them in my [Datasets shortlist](https://docs.google.com/spreadsheets/d/1ldHpPRw_h2igZUgrDVV3-4N8vYuZXxyOC60sUJlbb7E/edit#gid=0)
+We will use the dataset from Kaggle - https://www.kaggle.com/datasets/hugodarwood/epirecipes. This contains 'list of ingredients', 'measurements for ingredients', 'calories', 'ratings', 'steps for the recipe', 'some categories like vegetarian'.
 
-Currently the following 2 datasets seem to be good candidates for this project.
-1. https://www.kaggle.com/datasets/hugodarwood/epirecipes
+**Data Dictionary**
+| Column      | Non-Null Count | Dtype               | Description                                     |
+|-------------|----------------|---------------------|-------------------------------------------------|
+| ------      | -------------- | -----               | ------                                          |
+| title       | 15969 non-null | object              | Title of the recipe                             |
+| directions  | 15969 non-null | object              | Steps for the recipe                            |
+| ingredients | 15969 non-null | object              | Ingredients plus description of how to cut them |
+| categories  | 15969 non-null | object              | Array of categories                             |
+| calories    | 15969 non-null | float64             | Calories                                        |
+| rating      | 15969 non-null | float64             | Rating on a scale of 0 to 5                     |
+| desc        | 10636 non-null | object              | Extra tidbits about the recipe etc.             |
+| date        | 15969 non-null | datetime64[ns, UTC] | Date the recipe was created                     |
+| sodium      | 15967 non-null | float64             | Sodium content                                  |
+| fat         | 15901 non-null | float64             | Fat content                                     |
+| protein     | 15922 non-null | float64             | Protein content                                 |
 
-**Pros:**
-Contains ingredient measurements in the recipe.
 
-**Cons:**
-Small size ~ 16000 rows.
-Kaggle License says Unknown.
-Does not contain diet type (Vegan etc.) and cuisine type, but I have not been able to find any suitable dataset that contains that.
-Does not contain serving size.
+After removing null values and duplicate rows, there are 14526 recipes. This will be the size of the dataset we will do the modeling on.
 
+A preliminary EDA showed that 54% of the recipes in the dataset have ratings > 4.0 (on a scale of 0 to 5).
 
-2. https://www.kaggle.com/datasets/irkaal/foodcom-recipes-and-reviews
+This is an unsupervised learning problem as we do not have a target variable. We will evaluate the quality of results by manually inspecting the ingredients in the results (or eventually writing a script for evaluation).
 
-**Pros:**
-Contains serving size.
+Since we are dealing with text data, we will use `CountVectorizer` to preprocess the data.
 
-**Cons:**
-Does not have measurements for the ingredients.
+For modeling, we will be using `NearestNeighbors` to find the cosine similarity between the user input and recipes in the dataset.
 
 ### Walkthrough Demo
 
