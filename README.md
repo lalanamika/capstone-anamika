@@ -49,14 +49,14 @@ Promotion of Healthy Eating: By offering personalized recipe suggestions based o
 
 #### The Data
 When looking for datasets, I was looking for the following information:
-Contains list of ingredients
-Contains quantity of ingredients
-Contains nutrition information / calorie information
-Contains ratings for the recipe
-Contains recipe steps
-Contains serving size
-Contains diet type (Vegan, Gluten-free etc.)
-Contains cuisine type (Italian, Indian etc.)
+- Contains list of ingredients
+- Contains quantity of ingredients
+- Contains nutrition information / calorie information
+- Contains ratings for the recipe
+- Contains recipe steps
+- Contains serving size
+- Contains diet type (Vegan, Gluten-free etc.)
+- Contains cuisine type (Italian, Indian etc.)
 
 We will use the dataset from Kaggle - https://www.kaggle.com/datasets/hugodarwood/epirecipes.
 This contains 'list of ingredients', 'measurements for ingredients', 'calories', 'ratings', 'steps for the recipe', 'some categories like vegetarian'.
