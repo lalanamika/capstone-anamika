@@ -1,3 +1,4 @@
+## SmartRecipes
 ## Anamika Lal's Capstone Project
 ## BrainStation Data Science Bootcamp - Apr - Jul 2024
 ======================================================
@@ -129,7 +130,7 @@ For modeling, we will be using `NearestNeighbors` to find the cosine similarity 
 * `.gitignore`
     - Part of Git, includes files and folders to be ignored by Git version control
 
-* `capstine_env.yml`
+* `capstone_env.yml`
     - Conda environment specification
 
 * `Makefile`
