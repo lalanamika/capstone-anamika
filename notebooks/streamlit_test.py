@@ -21,6 +21,39 @@ import cust_tokenizer
 
 
 #######################################################################################################################################
+st.set_page_config("Streamlit Components Hub", "🎪", layout="wide")
+
+# Custom HTML/CSS for the banner - for this the image has to be on a URL, not on local machine
+custom_html = """
+<div class="banner">
+    <img src="https://cdn.stocksnap.io/img-thumbs/960w/peppers-vegetables_CSIVDF12OA.jpg" alt="Banner Image">
+</div>
+<style>
+    .banner {
+        width: 160%;
+        height: 200px;
+        overflow: hidden;
+    }
+    .banner img {
+        width: 100%;
+        object-fit: cover;
+    }
+</style>
+"""
+# Display the custom HTML
+st.components.v1.html(custom_html)
+
+from PIL import Image
+
+# image = Image.open("C:/Users/anami/Downloads/Data_Science/Capstone/Images/boiled_eggs_small.jpg")
+# new_image = image.resize((150, 150))
+# st.image(new_image)
+
+# THIS DOES NOT LOOK GOOD, STICK TO 150, 150
+# image = Image.open("C:/Users/anami/Downloads/Data_Science/Capstone/Images/stock_banner.jpg")
+# new_image = image.resize((1400, 150))
+# st.image(new_image)
+# st.image('C:/Users/anami/Downloads/Data_Science/Capstone/Images/stock_banner.jpg', caption='Berries')
 ### Create a title
 
 st.title("SmartRecipes - A Recipe Recommender")
@@ -99,6 +132,17 @@ st.dataframe(df.sample(5))
 #######################################################################################################################################
 ### MODEL INFERENCE
 
+genre = st.radio(
+    "What's your favorite movie genre",
+    [":rainbow[Comedy]", "***Drama***", "Documentary :movie_camera:"],
+    captions = ["Laugh out loud.", "Get the popcorn.", "Never stop learning."])
+
+if genre == ":rainbow[Comedy]":
+    st.write("You selected comedy.")
+else:
+    st.write("You didn't select comedy.")
+
+
 st.subheader("Using pretrained models with user input")
 
 # A. Load the model using joblib
@@ -138,7 +182,13 @@ for i in range(0, 11):  # TODO: 11 should be made configurable and match the n-n
     name = df.loc[indices[0][i], ['title']].values[0]
     distance = (distances[0][i]).round(3)
     rating = df.loc[indices[0][i], ['rating']].values[0]
+    ingredients = df.loc[indices[0][i], ['ingredientsStr']].values[0].split("',")
+    steps = df.loc[indices[0][i], ['directionsStr']].values[0]
     st.write(f"{name}  :  {distance}  :  {rating}")
+    with st.expander("See ingredients"):
+        st.write(ingredients)
+    with st.expander("See steps"):
+        st.write(steps)
 
 # prediction = 1
 # if prediction == 1:
