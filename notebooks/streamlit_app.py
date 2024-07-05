@@ -45,7 +45,7 @@ custom_html = """
 st.components.v1.html(custom_html)
 
 ### To position text and color, you can use html syntax
-st.markdown("<h1 style='text-align: center; color: blue;'>SmartRecipes</h1>", unsafe_allow_html=True)
+st.markdown("<h1 style='text-align: center; color: darkblue;'>SmartRecipes</h1>", unsafe_allow_html=True)
 
 # ===================================================
 # Load the dataset
@@ -69,7 +69,7 @@ def spellcheck(seriesOfWords, vocab, writeToScreen):
         word_distance = sorted_temp[0][0]
         corrected_word = sorted_temp[0][1]
         if word_distance > 0.5:
-            st.write(f"Sorry we could not recognize the ingredient {word}")
+            st.write(f":red[Sorry we could not recognize the ingredient {word}]")
         else:
             final_words.append(corrected_word)
     # st.write(final_words)
@@ -110,7 +110,7 @@ new_vocab_list = joblib.load('custom_vocab.pkl')
 vect = joblib.load('vect_mod.pkl')
 
 # B - Use desired ingredients and undesired ingredients
-yes_ing = st.text_input('Enter the ingredients to include below, separated by commas', 'Chicken, Spinach')
+yes_ing = st.text_input('Enter the ingredients to include below, separated by commas', 'Chicken, Potato')
 no_ing = st.text_input('Enter the ingredients to exclude below, separated by commas', 'None')
 
 yes_ing_list = yes_ing.split(",")
@@ -121,7 +121,7 @@ for ing in plurals_list_inc:
     if ing not in include_ing_list:
         include_ing_list.append(ing)
 includeIngString = " ".join(include_ing_list)
-st.write(includeIngString)
+# st.write(includeIngString)
 
 yes_ing_series = pd.Series(includeIngString)
 # st.write(corrected_ing_list)
@@ -135,7 +135,7 @@ if no_ing != "None" and no_ing != "":
         if ing not in exclude_ing_list:
             exclude_ing_list.append(ing)
     excludeIngString = " ".join(exclude_ing_list)
-    st.write(excludeIngString)
+    # st.write(excludeIngString)
 
 yes_ing_series = pd.Series(includeIngString)
 yes_ing_tx = vect.transform(yes_ing_series)
