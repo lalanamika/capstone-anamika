@@ -19,6 +19,11 @@ from pattern.en import singularize
 # CHECK - IS IT OK TO RUN THIS JUST THE FIRST TIME? OR DO I NEED TO RUN IT ON EVERY REBOOT?
 # nltk.download('popular')
 
+
+# TODO:
+# Add support for Peanut butter back
+# If input list is empty , dont run model
+# add support for comma separated?
 import joblib
 import cust_tokenizer
 
@@ -28,6 +33,9 @@ st.set_page_config("SmartRecipes", ":green_salad:", layout="wide")
 custom_html = """
 <div class="banner">
     <img src="https://cdn.stocksnap.io/img-thumbs/960w/peppers-vegetables_CSIVDF12OA.jpg" alt="Banner Image">
+</div>
+<div class="banner-text">
+    <h1>SmartRecipes</h1>
 </div>
 <style>
     .banner {
@@ -39,13 +47,27 @@ custom_html = """
         width: 100%;
         object-fit: cover;
     }
+    .banner-text {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        text-align: center;
+        z-index: 1;
+        color: #fff;
+    }
+
+    .banner-text h1 {
+        font-size: 3rem;
+        margin-bottom: 20px;
+    }
 </style>
 """
 # Display the custom HTML
 st.components.v1.html(custom_html)
 
 ### To position text and color, you can use html syntax
-st.markdown("<h1 style='text-align: center; color: darkblue;'>SmartRecipes</h1>", unsafe_allow_html=True)
+# st.markdown("<h1 style='text-align: center; color: darkblue;'>SmartRecipes</h1>", unsafe_allow_html=True)
 
 # ===================================================
 # Load the dataset
