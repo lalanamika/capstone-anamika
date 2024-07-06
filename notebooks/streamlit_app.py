@@ -81,19 +81,23 @@ def spellcheck(seriesOfWords, vocab, writeToScreen):
     # TODO : Add docstring here
     final_words = []
     for word in seriesOfWords:
-        # convert to lowercase and remove any whitespace
-        word1 = word.lower()
-        word1_ns = word1.strip()
-        temp = [(jaccard_distance(set(ngrams(word1_ns, 2)),
-                                set(ngrams(w, 2))),w)
-                for w in vocab if w[0]==word1_ns[0]]
-        sorted_temp = sorted(temp, key = lambda val:val[0])
-        word_distance = sorted_temp[0][0]
-        corrected_word = sorted_temp[0][1]
-        if word_distance > 0.5:
-            st.write(f":red[Sorry we could not recognize the ingredient {word}]")
+        # if the word contains space, it is a 2 word ingredient, we won't spell check
+        if " " in word:
+            final_words.append(word)
         else:
-            final_words.append(corrected_word)
+            # convert to lowercase and remove any whitespace
+            word1 = word.lower()
+            word1_ns = word1.strip()
+            temp = [(jaccard_distance(set(ngrams(word1_ns, 2)),
+                                    set(ngrams(w, 2))),w)
+                    for w in vocab if w[0]==word1_ns[0]]
+            sorted_temp = sorted(temp, key = lambda val:val[0])
+            word_distance = sorted_temp[0][0]
+            corrected_word = sorted_temp[0][1]
+            if word_distance > 0.5:
+                st.write(f":red[Sorry we could not recognize the ingredient {word}]")
+            else:
+                final_words.append(corrected_word)
     # st.write(final_words)
     return final_words
 
@@ -101,10 +105,16 @@ def addPluralsAndSingulars(seriesOfWords, vocab):
     # TODO : Add docstring here
     res1 = []
     for word in seriesOfWords:
-        res1.append(pluralize(word))
-        res1.append(singularize(word))
-    spell_checked = spellcheck(set(res1), vocab, False)
-    return spell_checked
+        if " " in word:
+            pass
+        else:
+            res1.append(pluralize(word))
+            res1.append(singularize(word))
+    if len(res1) > 0:
+        spell_checked = spellcheck(set(res1), vocab, False)
+        return spell_checked
+    else:
+        return res1
 
 # ================================================
 df = load_data("../data/final/full_recipes.csv")
@@ -135,7 +145,12 @@ vect = joblib.load('vect_mod.pkl')
 yes_ing = st.text_input('Enter the ingredients to include below, separated by commas', 'Chicken, Potato')
 no_ing = st.text_input('Enter the ingredients to exclude below, separated by commas', 'None')
 
-yes_ing_list = yes_ing.split(",")
+# figure out separator
+separator = " "
+if "," in yes_ing:
+    separator = ","
+
+yes_ing_list = yes_ing.split(separator)
 corrected_ing_list_inc = spellcheck(yes_ing_list, new_vocab_list, True)
 include_ing_list.extend(corrected_ing_list_inc)
 plurals_list_inc = addPluralsAndSingulars(corrected_ing_list_inc, new_vocab_list)
@@ -149,7 +164,7 @@ yes_ing_series = pd.Series(includeIngString)
 # st.write(corrected_ing_list)
 
 if no_ing != "None" and no_ing != "":
-    no_ing_list = no_ing.split(",")
+    no_ing_list = no_ing.split(separator)
     corrected_ing_list_exc = spellcheck(no_ing_list, new_vocab_list, True)
     exclude_ing_list.extend(corrected_ing_list_exc)
     plurals_list_exc = addPluralsAndSingulars(corrected_ing_list_exc, new_vocab_list)
