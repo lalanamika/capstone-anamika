@@ -3,10 +3,11 @@
 # ingredients that a user has.
 # ===================================================
 
+# ===================================================
 # import libraries
 # NOTE - I had to manually do pip install nltk in the conda environment - for the spell checker
 # NOTE - I had to manually do pip install pattern in the conda environment - for the pluralizer
-
+# ===================================================
 import pandas as pd
 import streamlit as st
 import numpy as np
@@ -28,13 +29,14 @@ from pattern.en import singularize
 
 # ===================================================
 # Setup the web page
-
+# ===================================================
 st.set_page_config("SmartRecipes", ":green_salad:", layout="wide")
 
 # Custom HTML/CSS for the banner - for this the image has to be on a URL, not on local machine
 custom_html = """
 <div class="banner">
-    <img src="https://cdn.stocksnap.io/img-thumbs/960w/peppers-vegetables_CSIVDF12OA.jpg" alt="Banner Image">
+
+    <img src="https://images.unsplash.com/photo-1463123081488-789f998ac9c4?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Banner Image">
 </div>
 <div class="banner-text">
     <h1>SmartRecipes</h1>
@@ -60,7 +62,7 @@ custom_html = """
     }
 
     .banner-text h1 {
-        font-size: 3rem;
+        font-size: 5rem;
         margin-bottom: 20px;
     }
 </style>
@@ -68,9 +70,11 @@ custom_html = """
 # Display the custom HTML
 st.components.v1.html(custom_html)
 
+st.subheader(":green_salad: Let's see some recipes! :green_salad:")
+
 # ===================================================
 # Define the relevant functions
-
+# ===================================================
 @st.cache_data # <- add decorators after tried running the load multiple times
 def load_data(path):
     """
@@ -85,11 +89,13 @@ def load_data(path):
     df = pd.read_csv(path)
     return df
 
+
 def spellcheck(seriesOfWords, vocab, writeToScreen):
     """
     This functions does a spell check using jaccard_distance, we set a threshold of 0.5.
     If the distance is < 0.5, the word will be corrected, otherwise an error message will be
     sent to the user.
+    NOTE: If there is a 2 word ingredient, like "peanut butter", then this will not spell check it.
 
     input parameters:
         seriesOfWords - list of words
@@ -123,12 +129,17 @@ def spellcheck(seriesOfWords, vocab, writeToScreen):
     # st.write(final_words)
     return final_words
 
+
 def addPluralsAndSingulars(seriesOfWords, vocab):
     """
     This function will pluralize / singularize the words.
+    NOTE: If there is a 2 word ingredient, like "peanut butter", this will not
+    pluralize it.
+
     input parameters:
         seriesOfWords - a list of words
         vocab - a list containing the vocabulary of the trained CountVectorizer
+
     returns:
          a list containing the singular / plural from for the words
     """
@@ -145,10 +156,22 @@ def addPluralsAndSingulars(seriesOfWords, vocab):
     else:
         return res1
 
-def processInputString(input_string, new_vocab_list):
-    # TODO: Add docstring here
-    # Figure out separator, users can enter comma separated or space separated list of ingredients
-    # NOTE: If there is a 2 word ingredient, like "peanut butter", then you need commas to specify other ingredients
+
+def processInputString(input_string, vocab):
+    """
+    This function splits the input string (comma separated or space separated) into a list,
+    runs a spell check on the words, and also adds the plural / singular form of the words
+    to the result.
+    NOTE: If there is a 2 word ingredient, like "peanut butter", then you need commas to
+    specify other ingredients
+
+    input parameters:
+        input_string - comma or space separated string, containing words entered by the user
+        vocab - a list containing the vocabulary of the trained CountVectorizer
+    returns:
+        a list of words that includes the corrected words for any spelling mistakes, and their
+        singular / plural form too.
+    """
     result_list = []
     processed_string = ""
     if input_string is not None and input_string != "" and input_string != " ":
@@ -157,9 +180,9 @@ def processInputString(input_string, new_vocab_list):
             separator = ","
 
         ing_list = input_string.split(separator)
-        corrected_ing_list = spellcheck(ing_list, new_vocab_list, True)
+        corrected_ing_list = spellcheck(ing_list, vocab, True)
         result_list.extend(corrected_ing_list)
-        plurals_list = addPluralsAndSingulars(corrected_ing_list, new_vocab_list)
+        plurals_list = addPluralsAndSingulars(corrected_ing_list, vocab)
         for ing in plurals_list:
             if ing not in result_list:
                 result_list.append(ing)
@@ -168,18 +191,14 @@ def processInputString(input_string, new_vocab_list):
 
 
 # ===================================================
-
-# ================================================
+# Load the data, trained vectorizer and model
+# ===================================================
 df = load_data("../data/final/full_recipes.csv")
-
-st.subheader("Let's see some recipes!")
-
-# A. Load the model using joblib
 model = joblib.load('model_final.pkl')
 new_vocab_list = joblib.load('custom_vocab.pkl')
 vect = joblib.load('vect_mod.pkl')
 
-# B1 - Categories
+# Add a radio button for categories
 genre = st.radio(
     "Are you looking for any specific category of recipe?",
     ["No", ":green[Vegetarian] :leafy_green:", "Gluten-Free", "Dessert :cake:"])
@@ -192,17 +211,20 @@ elif genre == "Gluten-Free":
 elif genre == "Dessert :cake:":
     category_string = "Dessert"
 
-# B2 - Use desired ingredients and undesired ingredients
+# Add text boxes for "include ingredients" and "exclude ingredients"
 yes_ing = st.text_input('Which ingredients do you want to use?', 'Chicken, Potato')
 no_ing = st.text_input('If there is an ingredient you want to avoid, enter it below.', '')
 
+# ==============================================================
+# Process the user input to make it ready for the model
+# Spell check and pluralize / singularize the input ingredients
+# Also combine the category choice with the "include ingredients"
+# ==============================================================
 include_ing_string = category_string + " " + processInputString(yes_ing, new_vocab_list)
 exclude_ing_string = processInputString(no_ing, new_vocab_list)
 
-# st.write(category_string)
-# st.write(include_ing_string)
-# st.write(exclude_ing_string)
-
+# Transform the processed version of the "include ingredients" and "exclude ingredients"
+# to come up with a vector to feed to the trained model.
 updated_ing_tx = None
 yes_ing_tx = None
 no_ing_tx = None
@@ -224,17 +246,17 @@ else:
     if no_ing_tx is not None:
         updated_ing_tx = no_ing_tx
 
+# ==============================================================
+# Run the model if there is some valid user input
+# ==============================================================
 if updated_ing_tx is not None:
     distances, indices = model.kneighbors(updated_ing_tx)
 
-    # C.  Print result
-    for i in range(0, 11):  # TODO: 11 should be made configurable and match the n-neighbors number
+    # Show the result on the web page
+    for i in range(0, 11):  # NOTE: 11 can be made configurable and match the n-neighbors number
         name = df.loc[indices[0][i], ['title']].values[0]
-        distance = (distances[0][i]).round(3)
-        rating = df.loc[indices[0][i], ['rating']].values[0]
         ingredients = df.loc[indices[0][i], ['ingredientsStr']].values[0].split("',")
         steps = df.loc[indices[0][i], ['directionsStr']].values[0]
-        # st.write(f"{name}  :  {distance}  :  {rating}")
         with st.expander(name):
             st.write(":blue[Ingredients]")
             for food in ingredients:
@@ -243,18 +265,15 @@ if updated_ing_tx is not None:
             st.write(steps)
 
 
-
-###################
+# ==============================================================
 # Test Cases
+# ==============================================================
 # Add only beetroot for include ing - No recipes shown only error message
 # Add only category with no ingredients in inc and exc
 # Exclude something with nothing in inclusion
-
 # Test 2 word ingredients - Peanut butter
 # Test spell checker - Peanut butter, brocoli
 # Test pluralization - Chicken Potato
 # Blue bleu
-
-# Check heavy cream as an ingredient - error message heavies
-# include ingredients empty is giving error.
-###################
+# Check heavy cream as an ingredient
+# ==============================================================
