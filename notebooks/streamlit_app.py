@@ -95,7 +95,8 @@ def spellcheck(seriesOfWords, vocab, writeToScreen):
             word_distance = sorted_temp[0][0]
             corrected_word = sorted_temp[0][1]
             if word_distance > 0.5:
-                st.write(f":red[Sorry we could not recognize the ingredient {word}]")
+                if writeToScreen:
+                    st.write(f":red[Sorry we could not recognize the ingredient {word}]")
             else:
                 final_words.append(corrected_word)
     # st.write(final_words)
@@ -116,85 +117,115 @@ def addPluralsAndSingulars(seriesOfWords, vocab):
     else:
         return res1
 
+def processInputString(input_string, new_vocab_list):
+    # TODO: Add docstring here
+    # Figure out separator, users can enter comma separated or space separated list of ingredients
+    # NOTE: If there is a 2 word ingredient, like "peanut butter", then you need commas to specify other ingredients
+    result_list = []
+    processed_string = ""
+    if input_string is not None and input_string != "" and input_string != " ":
+        separator = " "
+        if "," in input_string:
+            separator = ","
+
+        ing_list = input_string.split(separator)
+        corrected_ing_list = spellcheck(ing_list, new_vocab_list, True)
+        result_list.extend(corrected_ing_list)
+        plurals_list = addPluralsAndSingulars(corrected_ing_list, new_vocab_list)
+        for ing in plurals_list:
+            if ing not in result_list:
+                result_list.append(ing)
+        processed_string = " ".join(result_list)
+    return processed_string
+
+
+
 # ================================================
 df = load_data("../data/final/full_recipes.csv")
 
 st.subheader("Let's see some recipes!")
-
-include_ing_list = []
-exclude_ing_list = []
-
-genre = st.radio(
-    "Are you looking for any specific category of recipe?",
-    ["No", ":green[Vegetarian] :leafy_green:", "Gluten-Free", "Dessert :cake:"])
-
-if genre == ":green[Vegetarian] :leafy_green:":
-    include_ing_list.append("Vegetarian")
-elif genre == "Gluten-Free":
-    include_ing_list.append("Gluten free")
-elif genre == "Dessert :cake:":
-    include_ing_list.append("Dessert")
-
 
 # A. Load the model using joblib
 model = joblib.load('model_final.pkl')
 new_vocab_list = joblib.load('custom_vocab.pkl')
 vect = joblib.load('vect_mod.pkl')
 
-# B - Use desired ingredients and undesired ingredients
+# B1 - Categories
+genre = st.radio(
+    "Are you looking for any specific category of recipe?",
+    ["No", ":green[Vegetarian] :leafy_green:", "Gluten-Free", "Dessert :cake:"])
+
+category_string = ""
+if genre == ":green[Vegetarian] :leafy_green:":
+    category_string = "Vegetarian"
+elif genre == "Gluten-Free":
+    category_string = "Gluten free"
+elif genre == "Dessert :cake:":
+    category_string = "Dessert"
+
+# B2 - Use desired ingredients and undesired ingredients
 yes_ing = st.text_input('Enter the ingredients to include below, separated by commas', 'Chicken, Potato')
-no_ing = st.text_input('Enter the ingredients to exclude below, separated by commas', 'None')
+no_ing = st.text_input('Enter the ingredients to exclude below, separated by commas', '')
 
-# figure out separator
-separator = " "
-if "," in yes_ing:
-    separator = ","
+include_ing_string = category_string + " " + processInputString(yes_ing, new_vocab_list)
+exclude_ing_string = processInputString(no_ing, new_vocab_list)
 
-yes_ing_list = yes_ing.split(separator)
-corrected_ing_list_inc = spellcheck(yes_ing_list, new_vocab_list, True)
-include_ing_list.extend(corrected_ing_list_inc)
-plurals_list_inc = addPluralsAndSingulars(corrected_ing_list_inc, new_vocab_list)
-for ing in plurals_list_inc:
-    if ing not in include_ing_list:
-        include_ing_list.append(ing)
-includeIngString = " ".join(include_ing_list)
-# st.write(includeIngString)
-
-yes_ing_series = pd.Series(includeIngString)
-# st.write(corrected_ing_list)
-
-if no_ing != "None" and no_ing != "":
-    no_ing_list = no_ing.split(separator)
-    corrected_ing_list_exc = spellcheck(no_ing_list, new_vocab_list, True)
-    exclude_ing_list.extend(corrected_ing_list_exc)
-    plurals_list_exc = addPluralsAndSingulars(corrected_ing_list_exc, new_vocab_list)
-    for ing in plurals_list_exc:
-        if ing not in exclude_ing_list:
-            exclude_ing_list.append(ing)
-    excludeIngString = " ".join(exclude_ing_list)
-    # st.write(excludeIngString)
-
-yes_ing_series = pd.Series(includeIngString)
-yes_ing_tx = vect.transform(yes_ing_series)
+# st.write(category_string)
+# st.write(include_ing_string)
+# st.write(exclude_ing_string)
 
 updated_ing_tx = None
-if len(exclude_ing_list) > 0:
-    no_ing_series = pd.Series(no_ing)
+yes_ing_tx = None
+no_ing_tx = None
+
+if include_ing_string is not None and include_ing_string != "" and include_ing_string != " ":
+    yes_ing_series = pd.Series(include_ing_string)
+    yes_ing_tx = vect.transform(yes_ing_series)
+
+if exclude_ing_string is not None and exclude_ing_string != "" and exclude_ing_string != " ":
+    no_ing_series = pd.Series(exclude_ing_string)
     no_ing_tx = (vect.transform(no_ing_series)) * -1
-    updated_ing_tx = yes_ing_tx + no_ing_tx
+
+if yes_ing_tx is not None:
+    if no_ing_tx is not None:
+        updated_ing_tx = yes_ing_tx + no_ing_tx
+    else: # no ing is none
+        updated_ing_tx = yes_ing_tx
 else:
-    updated_ing_tx = yes_ing_tx
+    if no_ing_tx is not None:
+        updated_ing_tx = no_ing_tx
 
-distances, indices = model.kneighbors(updated_ing_tx)
+if updated_ing_tx is not None:
+    distances, indices = model.kneighbors(updated_ing_tx)
 
-# C.  Print result
-for i in range(0, 11):  # TODO: 11 should be made configurable and match the n-neighbors number
-    name = df.loc[indices[0][i], ['title']].values[0]
-    distance = (distances[0][i]).round(3)
-    rating = df.loc[indices[0][i], ['rating']].values[0]
-    ingredients = df.loc[indices[0][i], ['ingredientsStr']].values[0].split("',")
-    steps = df.loc[indices[0][i], ['directionsStr']].values[0]
-    # st.write(f"{name}  :  {distance}  :  {rating}")
-    with st.expander(name):
-        st.write(ingredients)
-        st.write(steps)
+    # C.  Print result
+    for i in range(0, 11):  # TODO: 11 should be made configurable and match the n-neighbors number
+        name = df.loc[indices[0][i], ['title']].values[0]
+        distance = (distances[0][i]).round(3)
+        rating = df.loc[indices[0][i], ['rating']].values[0]
+        ingredients = df.loc[indices[0][i], ['ingredientsStr']].values[0].split("',")
+        steps = df.loc[indices[0][i], ['directionsStr']].values[0]
+        # st.write(f"{name}  :  {distance}  :  {rating}")
+        with st.expander(name):
+            st.write(":blue[Ingredients]")
+            for food in ingredients:
+                st.write(food)
+            st.write(":blue[Steps]")
+            st.write(steps)
+
+
+
+###################
+# Test Cases
+# Add only beetroot for include ing - No recipes shown only error message
+# Add only category with no ingredients in inc and exc
+# Exclude something with nothing in inclusion
+
+# Test 2 word ingredients - Peanut butter
+# Test spell checker - Peanut butter, brocoli
+# Test pluralization - Chicken Potato
+# Blue bleu
+
+# Check heavy cream as an ingredient - error message heavies
+# include ingredients empty is giving error.
+###################
