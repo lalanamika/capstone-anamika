@@ -1,10 +1,18 @@
-### import libraries
+# Streamlit app for SmartRecipes - a recipe recommender system that uses a
+# model trained on 20000 recipes to recommend recipes that contain
+# ingredients that a user has.
+# ===================================================
+
+# import libraries
 # NOTE - I had to manually do pip install nltk in the conda environment - for the spell checker
 # NOTE - I had to manually do pip install pattern in the conda environment - for the pluralizer
 
 import pandas as pd
 import streamlit as st
 import numpy as np
+
+import joblib
+import cust_tokenizer
 
 # for spell checker
 import nltk
@@ -15,17 +23,11 @@ from pattern.en import pluralize
 from pattern.en import singularize
 # Installing NLTK data to import
 # and run en module of pattern
-
-# CHECK - IS IT OK TO RUN THIS JUST THE FIRST TIME? OR DO I NEED TO RUN IT ON EVERY REBOOT?
+# NOTE - This needs to be done the first time this is run.
 # nltk.download('popular')
 
-
-# TODO:
-# Add support for Peanut butter back
-# If input list is empty , dont run model
-# add support for comma separated?
-import joblib
-import cust_tokenizer
+# ===================================================
+# Setup the web page
 
 st.set_page_config("SmartRecipes", ":green_salad:", layout="wide")
 
@@ -52,7 +54,7 @@ custom_html = """
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
-        text-align: center;
+        text-align: left;
         z-index: 1;
         color: #fff;
     }
@@ -66,19 +68,38 @@ custom_html = """
 # Display the custom HTML
 st.components.v1.html(custom_html)
 
-### To position text and color, you can use html syntax
-# st.markdown("<h1 style='text-align: center; color: darkblue;'>SmartRecipes</h1>", unsafe_allow_html=True)
-
 # ===================================================
-# Load the dataset
+# Define the relevant functions
+
 @st.cache_data # <- add decorators after tried running the load multiple times
 def load_data(path):
+    """
+    This function loads the csv into a Pandas DataFrame
 
-    df = df = pd.read_csv(path)
+    input parameters:
+        path - string - path to the csv file
+
+    returns:
+        a Pandas DataFrame object
+    """
+    df = pd.read_csv(path)
     return df
 
 def spellcheck(seriesOfWords, vocab, writeToScreen):
-    # TODO : Add docstring here
+    """
+    This functions does a spell check using jaccard_distance, we set a threshold of 0.5.
+    If the distance is < 0.5, the word will be corrected, otherwise an error message will be
+    sent to the user.
+
+    input parameters:
+        seriesOfWords - list of words
+        vocab - list containing the vocabulary of the trained CountVectorizer
+        writeToScreen - boolean. Set to True if you want the error message to be printed to
+                        the web page for the user to see. Set to False if not.
+
+    returns:
+        list of corrected words.
+    """
     final_words = []
     for word in seriesOfWords:
         # if the word contains space, it is a 2 word ingredient, we won't spell check
@@ -103,7 +124,14 @@ def spellcheck(seriesOfWords, vocab, writeToScreen):
     return final_words
 
 def addPluralsAndSingulars(seriesOfWords, vocab):
-    # TODO : Add docstring here
+    """
+    This function will pluralize / singularize the words.
+    input parameters:
+        seriesOfWords - a list of words
+        vocab - a list containing the vocabulary of the trained CountVectorizer
+    returns:
+         a list containing the singular / plural from for the words
+    """
     res1 = []
     for word in seriesOfWords:
         if " " in word:
@@ -139,6 +167,7 @@ def processInputString(input_string, new_vocab_list):
     return processed_string
 
 
+# ===================================================
 
 # ================================================
 df = load_data("../data/final/full_recipes.csv")
@@ -164,8 +193,8 @@ elif genre == "Dessert :cake:":
     category_string = "Dessert"
 
 # B2 - Use desired ingredients and undesired ingredients
-yes_ing = st.text_input('Enter the ingredients to include below, separated by commas', 'Chicken, Potato')
-no_ing = st.text_input('Enter the ingredients to exclude below, separated by commas', '')
+yes_ing = st.text_input('Which ingredients do you want to use?', 'Chicken, Potato')
+no_ing = st.text_input('If there is an ingredient you want to avoid, enter it below.', '')
 
 include_ing_string = category_string + " " + processInputString(yes_ing, new_vocab_list)
 exclude_ing_string = processInputString(no_ing, new_vocab_list)
