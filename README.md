@@ -1,52 +1,26 @@
 ## SmartRecipes
-## Anamika Lal's Capstone Project
-## BrainStation Data Science Bootcamp - Apr - Jul 2024
+## Capstone Project - BrainStation Data Science Bootcamp - Apr - Jul 2024
 ======================================================
 
 ### Project Overview
 
 #### The Problem Area
-I am interested in cooking and nutrition and want to build a recipe recommendation system such that it can help reduce food waste, promote mindful / conscious eating, and encourage users to try new recipes.
+Have you ever tried cooking a new recipe, and had leftover ingredients that you had no idea how to use, so you ended up throwing them away?
 
 #### The User
 Home cooks and Food enthusiasts: Individuals who enjoy cooking at home and are looking for new recipes to try.
 
-Health-conscious consumers: Users who prioritize health and nutrition in their dietary choices.
-
-Cultural explorers: Users interested in exploring diverse cuisines.
-
 #### The Idea
-At a high level, my idea is as follows:
-
 Using machine learning, how might we “recommend food recipes” such that we can:
 
 Reduce food waste (by providing ideas on how to use the ingredients they have or suggesting the quantities of ingredients that they will have to buy).
 
-Promote mindful / conscious eating (by providing calorie info / nutrition info).
-
-Encourage users to try new recipes (by recommending options based on their preferences). Some options could be:
-Ingredients
-Type of cuisine
-Calorie count / Nutrition information
-Vegan / Vegetarian / Gluten free etc.
-
-##### Some thoughts about implementation.
-
-What is the definition of a 'good'? Is the recipe highly rated by multiple users?
-
-What would be a good recipe in terms of calories? Uses ingredients that the user is looking for and order by rating?
-
-What would be a good recipe in terms of reducing food waste?
-Could be a recipe that uses minimal ingredients (including the ingredient I am looking for).
-Or if it calls for a can something, make sure it uses the full can.
-If a recipe calls for a lot of fresh vegetables, but the recipe calls only for less portions, then it is not good in terms of food waste.
-
+#### The Solution
+SmartRecipes is a recipe recommendation system built with the goal of reducing food waste. The recommender should rank recipes with less relevant ingredients higher.
 
 #### The Impact
 
 Reduced Food Waste: The system can help reduce food waste by promoting efficient use of ingredients and leftovers. This contributes to sustainability efforts and addresses a pressing societal concern.
-
-Promotion of Healthy Eating: By offering personalized recipe suggestions based on users' preferences and dietary restrictions, the recommendation system can encourage users to explore and adopt healthier eating habits. This aligns with the growing societal emphasis on wellness and nutrition.
 
 #### The Data
 When looking for datasets, I was looking for the following information:
@@ -87,25 +61,16 @@ This is an unsupervised learning problem as we do not have a target variable. We
 
 Since we are dealing with text data, we will use `CountVectorizer` to preprocess the data.
 
-For modeling, we will be using `NearestNeighbors` to find the cosine similarity between the user input and recipes in the dataset.
+For modeling, we will be using scikit-learn's `NearestNeighbors` unsupervised learner to find the cosine similarity between the user input and recipes in the dataset.
 
-### Walkthrough Demo
+We will also build a Streamlit app in which users can enter ingredients and the recommender returns the top 10 recipes with the relevant ingredients.
 
-...
-...
-...
 
 ### Project Flowchart
 
-...
-...
-...
+TODO - Add Flowchart image here
 
 ### Project Organization
-
-...
-...
-...
 
 * `data`
     - contains link to copy of the dataset (stored in a publicly accessible Google Drive folder)
@@ -117,41 +82,16 @@ For modeling, we will be using `NearestNeighbors` to find the cosine similarity 
 * `notebooks`
     - `02-EDA-Epicurious-Cleaning.ipynb` - Cleaning of the dataset.
     - `03-Pre-processing-Epicurious.ipynb` - Using CountVectorizer to tokenize the data, and NearestNeighbors to do preliminary modeling.
+    - `04-Modelling-Final.ipynb` - Final modeling using a custom vocabulary.
 
-* `reports`
-    - contains final report which summarises the project
-
-* `references`
-    - contains papers / tutorials used in the project
-
-* `src`
-    - Contains the project source code (refactored from the notebooks)
+* `Streamlit`
+    - `streamlit_app.py` - Streamlit app for the recipe recommender.
 
 * `.gitignore`
     - Part of Git, includes files and folders to be ignored by Git version control
-
-* `capstone_env.yml`
-    - Conda environment specification
-
-* `Makefile`
-    - Automation script for the project
 
 * `README.md`
     - Project landing page (this page)
 
 * `LICENSE`
     - Project license
-
-### Dataset
-
-...
-...
-...
-
-### Credits & References
-
-...
-...
-...
-
---------
