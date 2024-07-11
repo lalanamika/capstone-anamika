@@ -13,7 +13,6 @@ import streamlit as st
 import numpy as np
 
 import joblib
-import cust_tokenizer
 
 # for spell checker
 import nltk
@@ -26,6 +25,10 @@ from pattern.en import singularize
 # and run en module of pattern
 # NOTE - This needs to be done the first time this is run.
 # nltk.download('popular')
+
+from sys import path
+path.append("../notebooks/")
+import cust_tokenizer
 
 # ===================================================
 # Setup the web page
@@ -76,7 +79,7 @@ st.subheader(":green_salad: Let's see some recipes! :green_salad:")
 # Define the relevant functions
 # ===================================================
 @st.cache_data # <- add decorators after tried running the load multiple times
-def load_data(path):
+def load_data(path_to_file):
     """
     This function loads the csv into a Pandas DataFrame
 
@@ -86,7 +89,7 @@ def load_data(path):
     returns:
         a Pandas DataFrame object
     """
-    df = pd.read_csv(path)
+    df = pd.read_csv(path_to_file)
     return df
 
 
@@ -194,9 +197,9 @@ def processInputString(input_string, vocab):
 # Load the data, trained vectorizer and model
 # ===================================================
 df = load_data("../data/final/full_recipes.csv")
-model = joblib.load('model_final.pkl')
-new_vocab_list = joblib.load('custom_vocab.pkl')
-vect = joblib.load('vect_mod.pkl')
+model = joblib.load('../model/model_final.pkl')
+new_vocab_list = joblib.load('../model/custom_vocab.pkl')
+vect = joblib.load('../model/vect_mod.pkl')
 
 # Add a radio button for categories
 genre = st.radio(
@@ -274,6 +277,4 @@ if updated_ing_tx is not None:
 # Test 2 word ingredients - Peanut butter
 # Test spell checker - Peanut butter, brocoli
 # Test pluralization - Chicken Potato
-# Blue bleu
-# Check heavy cream as an ingredient
 # ==============================================================
