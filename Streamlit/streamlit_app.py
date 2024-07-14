@@ -24,7 +24,7 @@ from pattern.en import singularize
 # Installing NLTK data to import
 # and run en module of pattern
 # NOTE - This needs to be done the first time this is run.
-# nltk.download('popular')
+nltk.download('popular')
 
 from sys import path
 path.append("../notebooks/")
