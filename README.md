@@ -1,11 +1,23 @@
-## SmartRecipes
+## SmartRecipes - a recipe recommender
 ## Capstone Project - BrainStation Data Science Bootcamp - Apr - Jul 2024
-======================================================
+==========================================================================
+
+### Table of Contents
+- [Project Overview](#project-overview)
+  * [The Problem Area](#the-problem-area)
+  * [The User](#the-user)
+  * [The Idea](#the-idea)
+  * [The Impact](#the-impact)
+  * [The Solution](#the-solution)
+  * [The Data](#the-data)
+- [Project Flowchart](#project-flowchart)
+- [Project Organization](#project-organization)
+
 
 ### Project Overview
 
 #### The Problem Area
-Have you ever tried cooking a new recipe, and had leftover ingredients that you had no idea how to use, so you ended up throwing them away?
+Have you ever tried cooking a new recipe, and had leftover ingredients that you had no idea how to use, so you ended up throwing them away? This is a problem that I face often and I was curious to see whether I could build a recipe recommender using ML that could help with this.
 
 #### The User
 Home cooks and Food enthusiasts: Individuals who enjoy cooking at home and are looking for new recipes to try.
@@ -15,12 +27,23 @@ Using machine learning, how might we “recommend food recipes” such that we c
 
 Reduce food waste (by providing ideas on how to use the ingredients they have or suggesting the quantities of ingredients that they will have to buy).
 
-#### The Solution
-SmartRecipes is a recipe recommendation system built with the goal of reducing food waste. The recommender should rank recipes with less relevant ingredients higher.
-
 #### The Impact
 
 Reduced Food Waste: The system can help reduce food waste by promoting efficient use of ingredients and leftovers. This contributes to sustainability efforts and addresses a pressing societal concern.
+
+#### The Solution
+SmartRecipes is a recipe recommendation system built with the goal of reducing food waste. 
+    - The dataset has about 20,000 recipes. 
+    - This is a content based recommendation system.
+    - The recommender gives recipes from the dataset, ranked by closest match and less ingredients.
+
+This is an unsupervised learning problem as we do not have a target variable. We will evaluate the quality of results by manually inspecting the ingredients in the results (or eventually writing a script for evaluation).
+
+Since we are dealing with text data, we will use `CountVectorizer` to preprocess the data.
+
+For modeling, we will be using scikit-learn's `NearestNeighbors` unsupervised learner to find the cosine similarity between the user input and recipes in the dataset.
+
+We will also build a Streamlit app in which users can enter ingredients and the recommender returns the top 10 recipes with the relevant ingredients.
 
 #### The Data
 When looking for datasets, I was looking for the following information:
@@ -55,37 +78,34 @@ This contains 'list of ingredients', 'measurements for ingredients', 'calories',
 
 After removing null values and duplicate rows, there are 14526 recipes. This will be the size of the dataset we will do the modeling on.
 
-A preliminary EDA showed that 54% of the recipes in the dataset have ratings > 4.0 (on a scale of 0 to 5).
-
-This is an unsupervised learning problem as we do not have a target variable. We will evaluate the quality of results by manually inspecting the ingredients in the results (or eventually writing a script for evaluation).
-
-Since we are dealing with text data, we will use `CountVectorizer` to preprocess the data.
-
-For modeling, we will be using scikit-learn's `NearestNeighbors` unsupervised learner to find the cosine similarity between the user input and recipes in the dataset.
-
-We will also build a Streamlit app in which users can enter ingredients and the recommender returns the top 10 recipes with the relevant ingredients.
-
-
 ### Project Flowchart
+![High_Level_Flowchart](https://github.com/lalanamika/capstone-anamika/blob/main/visualizations/High_Level_Flowchart.png)
 
-TODO - Add Flowchart image here
 
 ### Project Organization
 
+
 * `data`
-    - contains link to copy of the dataset (stored in a publicly accessible Google Drive folder)
-    - saved copy of aggregated / processed data as long as those are not too large (> 10 MB)
+    - `raw` folder contains the relevant data copied from Kaggle.
+    - `interim` folder contains the words excluded during custom tokenization as well as the cleaned datasets.
+    - `final` folder contains the csv file after cleaning and feature engineering.
 
 * `model`
-    - joblib dump of final model / model object
+    - joblib dump of final model, custom vocabulary, and vectorizer.
 
 * `notebooks`
-    - `02-EDA-Epicurious-Cleaning.ipynb` - Cleaning of the dataset.
-    - `03-Pre-processing-Epicurious.ipynb` - Using CountVectorizer to tokenize the data, and NearestNeighbors to do preliminary modeling.
-    - `04-Modelling-Final.ipynb` - Final modeling using a custom vocabulary.
+    - `1-EDA-Cleaning.ipynb` - Cleaning the dataset.
+    - `2-Pre-processing.ipynb` - Using CountVectorizer to tokenize the data, and NearestNeighbors to do preliminary modelling.
+    - `3-Initial-Modelling-Experiments.ipynb` - Experiments with different custom vocabulary, figuring out spell checker etc.
+    - `4-Final-Modelling.ipynb` - Final modeling using a custom vocabulary.
+    - `cust_tokenizer.py` - Module for custom tokenization. This is used by the notebooks and the Streamlit app.
+ 
+* `visualizations`
+    - Any flowcharts, or visualizations created during the project.
 
 * `Streamlit`
     - `streamlit_app.py` - Streamlit app for the recipe recommender.
+    - Also contains a screenshot of the Streamlit app that was built.
 
 * `.gitignore`
     - Part of Git, includes files and folders to be ignored by Git version control
