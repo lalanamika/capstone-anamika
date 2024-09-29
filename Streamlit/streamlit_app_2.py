@@ -13,6 +13,7 @@ import streamlit as st
 import numpy as np
 
 import joblib
+import os.path
 
 # for spell checker
 import nltk
@@ -193,10 +194,12 @@ def processInputString(input_string, vocab):
 # ===================================================
 # Load the data, trained vectorizer and model
 # ===================================================
-df = load_data("../data/final/full_recipes.csv")
-model = joblib.load('../model/model_final.pkl')
-new_vocab_list = joblib.load('../model/custom_vocab.pkl')
-vect = joblib.load('../model/vect_mod.pkl')
+path = os.path.dirname(__file__)
+st.write(path)
+df = load_data(path+"/../data/final/full_recipes.csv")
+model = joblib.load(path+'/../model/model_final.pkl')
+new_vocab_list = joblib.load(path+'/../model/custom_vocab.pkl')
+vect = joblib.load(path+'/../model/vect_mod.pkl')
 
 # Add a radio button for categories
 genre = st.radio(
