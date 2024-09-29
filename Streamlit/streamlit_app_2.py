@@ -25,8 +25,6 @@ from nltk.util import ngrams
 # NOTE - This needs to be done the first time this is run.
 nltk.download('popular')
 
-from sys import path
-path.append("../notebooks/")
 import cust_tokenizer
 
 # ===================================================
