@@ -1,8 +1,13 @@
+import os.path
+
 from sklearn.feature_extraction._stop_words import ENGLISH_STOP_WORDS
+
+path = os.path.dirname(__file__)
+measurements_file = path+'/measurement_list.txt'
 
 # Remove units of measurements such as teaspoons, cups, ounces etc. Full list at https://en.wikibooks.org/wiki/Cookbook:Units_of_measurement
 # measurements = set(line.strip() for line in open('../data/interim/measurement_list.txt'))
-measurements = set(line.strip() for line in open('measurement_list.txt'))
+measurements = set(line.strip() for line in open(measurements_file))
 
 # Remove extra adjectives like 'baked', 'thawed', 'cleaned' etc.
 extra_adjectives = set(line.strip() for line in open('extra_adjectives_list.txt'))
