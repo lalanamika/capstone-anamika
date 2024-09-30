@@ -13,6 +13,8 @@ It took me a while to figure out how to make the Streamlit app reference files i
 - `extra_words_list.txt`
 
 I finally figured out that the way to reference other directories on the deployment server can be done by following the steps shown in the following example:
+```
 import os.path
 path = os.path.dirname(__file__)
 df = load_data(path+"/../data/final/full_recipes.csv")
+```
