@@ -195,7 +195,6 @@ def processInputString(input_string, vocab):
 # Load the data, trained vectorizer and model
 # ===================================================
 path = os.path.dirname(__file__)
-st.write(path)
 df = load_data(path+"/../data/final/full_recipes.csv")
 model = joblib.load(path+'/../model/model_final.pkl')
 new_vocab_list = joblib.load(path+'/../model/custom_vocab.pkl')
