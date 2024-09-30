@@ -45,6 +45,9 @@ For modeling, we will be using scikit-learn's `NearestNeighbors` unsupervised le
 
 We will also build a Streamlit app in which users can enter ingredients and the recommender returns the top 10 recipes with the relevant ingredients.
 
+
+![SmartRecipes_Streamlit_Screenshot](https://github.com/user-attachments/assets/3549ddf3-e142-4b1c-acc4-597d02cccc06)
+
 #### The Data
 When looking for datasets, I was looking for the following information:
 - Contains list of ingredients
